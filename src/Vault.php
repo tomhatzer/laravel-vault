@@ -14,6 +14,7 @@ class Vault
 
     protected $vault_service_factory = null;
     protected $options = null;
+    protected $approleCredentials = null;
 
     /**
      * Vault constructor
@@ -37,6 +38,13 @@ class Vault
             $this->options,
             ['headers' => ['X-Vault-Token' => $token]]
         );
+
+        return $this;
+    }
+
+    public function setApproleCredentials($credentials)
+    {
+        $this->approleCredentials = $credentials;
 
         return $this;
     }
@@ -93,6 +101,24 @@ class Vault
     public function authToken()
     {
         return new VaultWrapper($this->getFactory('auth/token'));
+    }
+
+    /**
+     * Calls Vault and returns a result like
+     * [
+     *   "success" => true,
+     *   "code" => 200,
+     *   "data" => [
+     *     "initialized" => true,
+     *   ],
+     *   "raw" => "{"initialized":true}\n",
+     *   "error" => null,
+     * ]
+     * @return array          the response data
+     */
+    public function authAppRole()
+    {
+        return new VaultWrapper($this->getFactory('auth/approle'));
     }
 
     /**
